@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}
+  Контакты
+{% endblock %}
+
+{% block content %}
+
+    <h4 class="frame_width">
+      Информация про учебному проекту  
+    </h4>
+
+    <article class="additional_design frame_width gradient_about">
+    <img src="{% static 'img/practicum_logo.png' %}" width="130" height="130" alt="Фото студента" align="left" 
+        style="float: left; margin-right: 40px; border-radius: 40%;">
+    
+    <ul>
+      <li>
+        Платформа обучения: Яндекс.Практикум          
+      </li>
+      <li>
+        Направление обучения (факультет, специализация): Бэкенд-разработчик
+      </li>
+      <li>
+        Период обучения : май 2025 - март 2026 гг.
+      </li>
+      <li>
+        Учебный проект: Блогикум (спринт 6/20)
+      </li>
+      <li>
+        Stack: Python, Django, Git
+      </li>
+    </ul>  
+    </article>  
+    <br>
+
+
+    <hr>
+
+    
+    <br>
+    <h4 class="frame_width">
+      Виталий В.  
+    </h4>
+
+    <article class="additional_design frame_width gradient_about">
+    <img src="{% static 'img/avatar.jpg' %}" width="130" height="130" alt="Фото студента" align="left" 
+          style="float: left; margin-right: 40px; border-radius: 40%;">
+    
+    <ul>
+      <li>
+        E-mail: login@e_mail.ru
+      </li>
+      <li>
+        Phone-number (+WhatsApp, +Telegram): +7 012 345 67 89
+      </li>
+      <li>
+        Соцсети: @link, #link, ...
+      </li>
+      <li>
+        Адрес: Страна, Город, Улица, ...
+      </li>
+      <li>
+        Учебный проект: Блогикум (спринт 6/20)
+      </li>
+    </ul>               
+    </article>                
+{% endblock %}
+
+<!-- Тут я хардкодил, не стал больше заморачиваться -->
+<!-- class="additional_desain" -->
