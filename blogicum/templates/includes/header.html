@@ -1,48 +1,44 @@
-{%load static %}
-{% with request.resolver_match.view_name as view_name %}
-
-<header class="header_design">
-  <nav class="navbar navbar-light" 
-  style="
-  background: linear-gradient(45deg, #2b09ec70, #d4e47794);
-  background-size: 400% 400%;
-  animation: gradient-change 7s ease infinite;
-  border-radius: 25px
-  ">
+{% load static %}
+<header>
+  <nav class="navbar navbar-light" style="background-color: lightskyblue">
     <div class="container">
       <a class="navbar-brand" href="{% url 'blog:index' %}">
         <img src="{% static 'img/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
         Блогикум
-      </a>        
-      <ul class="nav nav-pills">
-        <li class="nav-item">
-          <a class="nav-link {% if view_name == 'blog:index' %}active{% endif %}" href="{% url 'blog:index' %}">
-            Лента записей
-          </a>
-        </li>
-        <li class="nav-item">              
-          <a class="nav-link {% if view_name == 'pages:about' %}active{% endif %}" href="{% url 'pages:about' %}">
-            О проекте
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if view_name == 'pages:rules' %}active{% endif %}" href="{% url 'pages:rules' %}">
-            Наши правила
-          </a>
-        </li>
-      </ul>      
+      </a>
+      {% with request.resolver_match.view_name as view_name %}
+        <ul class="nav  nav-pills">
+          <li class="nav-item">
+            <a class="nav-link {% if view_name == 'pages:about' %} text-white {% endif %}" href="{% url 'pages:about' %}">
+              О проекте
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if view_name == 'pages:rules' %} text-white {% endif %}" href="{% url 'pages:rules' %}">
+              Правила
+            </a>
+          </li>
+          {% if user.is_authenticated %}
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+              <button type="button" class="btn btn-outline-primary"><a class="text-decoration-none text-reset"
+                  href="{% url 'blog:create_post' %}">Написать пост</a></button>
+              <button type="button" class="btn btn-outline-primary"><a class="text-decoration-none text-reset"
+                  href="{% url 'blog:profile' user.username %}">{{ user.username }}</a></button>
+              <form method="post" action="{% url 'logout' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-primary">Выйти</button>
+              </form>
+            </div>
+          {% else %}
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+              <button type="button" class="btn btn-outline-primary"><a class="text-decoration-none text-reset"
+                  href="{% url 'login' %}">Войти</a></button>
+              <button type="button" class="btn btn-outline-primary"><a class="text-decoration-none text-reset"
+                  href="{% url 'registration' %}">Регистрация</a></button>
+            </div>
+          {% endif %}
+        </ul>
+      {% endwith %}
     </div>
-  </nav> 
+  </nav>
 </header>
-<br>
-<br>
-
-
-{% endwith %}
-
-{% comment %}
-<!--
-Исходный стиль (оставлил его тут)
-style="background-color: lightskyblue"
--->
-{% endcomment %}
