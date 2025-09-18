@@ -1,0 +1,3 @@
+login		User1
+e-mail		user1@user1.com
+password	us3er1u4ser1!23
