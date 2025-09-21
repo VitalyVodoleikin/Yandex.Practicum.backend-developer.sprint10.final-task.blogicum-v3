@@ -128,7 +128,7 @@ def edit_profile(request, username):
         form.save()
         return redirect(reverse('blog:profile', args=[user.username]))
 
-    return render(request, 'blog/edit_profile.html',
+    return render(request, 'blog/user.html',
                   {'form': form, 'user': user})
 
 
