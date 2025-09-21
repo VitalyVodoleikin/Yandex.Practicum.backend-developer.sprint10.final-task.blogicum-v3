@@ -1,0 +1,17 @@
+{% with request.resolver_match.view_name as view_name %}
+
+<footer class="border-top text-center py-3">
+    <p>© Блогикум. 
+        {% if view_name == 'pages:about' %}Август, 2025</p>{% endif %}
+    {% if view_name == 'pages:about' %}
+    <br>
+    <p>
+        Сайт подготовил<br>
+        студент 116 кагорты Яндекс.Практикума<br>
+        Виталий В.<br>
+        <a href="{% url 'pages:contacts' %}">Связаться</a>
+    </p> 
+    <br>
+    {% endif %}
+</footer>
+{% endwith %}

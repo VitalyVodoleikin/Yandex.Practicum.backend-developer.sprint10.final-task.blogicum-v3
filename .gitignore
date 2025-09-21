@@ -1,0 +1,10 @@
+# Django media files
+media/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Sent emails directory
+sent_emails/

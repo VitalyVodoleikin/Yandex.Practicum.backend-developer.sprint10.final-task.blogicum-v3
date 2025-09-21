@@ -1,0 +1,4 @@
+Данные суперпользователя
+username		Djangoadmin
+e-mail			admin@example.com
+password		admin
