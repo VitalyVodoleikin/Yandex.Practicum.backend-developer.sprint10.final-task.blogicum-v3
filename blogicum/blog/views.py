@@ -94,7 +94,7 @@ def category_posts(request, category_slug):
     posts = get_published_posts().filter(category=category)
     selected_context = {
         'category': category,
-        'posts': posts
+        'page_obj': posts
     }
     return render(request, 'blog/category.html', selected_context)
 
