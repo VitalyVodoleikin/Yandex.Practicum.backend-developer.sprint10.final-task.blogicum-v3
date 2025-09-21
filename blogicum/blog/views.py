@@ -66,8 +66,19 @@ def get_published_posts():
     return posts_query
 
 
+# def index(request):
+#     context = {'page_obj': get_published_posts()[:POSTS_RELEASE_LIMIT]}
+#     return render(request, 'blog/index.html', context)
+
+
 def index(request):
-    context = {'page_obj': get_published_posts()[:POSTS_RELEASE_LIMIT]}
+    posts = get_published_posts()
+    paginator = Paginator(posts, POSTS_RELEASE_LIMIT)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj
+    }
     return render(request, 'blog/index.html', context)
 
 
