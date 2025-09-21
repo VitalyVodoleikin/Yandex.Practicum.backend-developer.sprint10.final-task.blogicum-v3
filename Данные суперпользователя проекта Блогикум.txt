@@ -1,4 +1,5 @@
 Данные суперпользователя
 username		Djangoadmin
 e-mail			admin@example.com
-password		admin
+old_password	admin
+new_password    1adminadmin23

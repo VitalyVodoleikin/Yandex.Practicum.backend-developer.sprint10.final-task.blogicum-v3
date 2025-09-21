@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import CommentForm, PostCreateForm, UserEditForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.mail import send_mail
 
 
 # Create your views here.
@@ -149,7 +150,9 @@ def create_post(request):
             post.is_scheduled = post.pub_date > time_now
 
             post.save()
-            return redirect(reverse('blog:post_detail', args=[post.pk]))
+            # return redirect(reverse('blog:post_detail', args=[post.pk]))    # Это уже можно удалить
+            # Перенаправление на профиль текущего пользователя
+            return redirect('blog:profile', username=request.user.username)
     else:
         form = PostCreateForm()
 
@@ -240,6 +243,16 @@ def delete_comment(request, post_id, comment_id):
 @login_required
 def change_password(request, username):
     # Смена пароля
+
+    # # Настроить отправку писем
+    # send_mail(
+    #     subject='Изменение пароля',          
+    #     message='Изменение пароля',  
+    #     from_email='from@example.com',
+    #     recipient_list=['to@example.com'],
+    #     fail_silently=False,
+    # )
+
     if request.user.username != username:
         return redirect("blog:profile", username=username)
 
