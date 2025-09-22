@@ -2,4 +2,4 @@
 username		Djangoadmin
 e-mail			admin@example.com
 old_password	admin
-new_password    1adminadmin23
+new_password    1adminadmin2
