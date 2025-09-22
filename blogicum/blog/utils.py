@@ -1,6 +1,5 @@
 from django.db.models.query import QuerySet
 from django.utils import timezone
-
 from .models import Post
 
 

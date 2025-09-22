@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from .const import MAX_LENGTH_TITLE_FIELDS, MAX_LENGTH_SELF_TITLE
-
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 
@@ -68,14 +67,6 @@ class Post(PublishAbstractModel):
         blank=True,
         null=True
     )
-    # ---
-    # comments = models.ForeignKey(
-    #     'Comment',
-    #     on_delete=models.CASCADE,
-    #     related_name='posts',
-    #     default=0
-    # )
-    # ---
 
     class Meta:
         verbose_name = 'публикация'
@@ -108,7 +99,7 @@ class Category(PublishAbstractModel):
     )
 
     class Meta:
-        verbose_name = 'атегория'
+        verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
         default_related_name = 'categories'
 

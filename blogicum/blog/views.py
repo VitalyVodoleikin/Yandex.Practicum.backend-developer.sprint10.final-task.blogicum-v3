@@ -1,47 +1,33 @@
+from .const import POSTS_RELEASE_LIMIT
+from django.contrib.auth import get_user_model
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.contrib.auth.views import (
+    PasswordChangeView, PasswordChangeDoneView,
+    PasswordResetView, PasswordResetDoneView,
+    PasswordResetConfirmView, PasswordResetCompleteView)
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from .forms import CommentForm, PostCreateForm, UserEditForm
 from .mixins import AuthorTestMixin, ReverseMixin
 from .models import Category, Comment, Post
 from .utils import add_default_filters, get_selection_of_posts
-from django.contrib.auth import get_user_model
-
-from django.contrib.auth.forms import (
-    PasswordChangeForm,
-    UserCreationForm
-)
-from django.shortcuts import render
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.decorators import login_required
-from .forms import (
-    CommentForm,
-    PostCreateForm,
-    UserEditForm
-)
 from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    UpdateView
-)
-from django.contrib.auth.mixins import (
-    UserPassesTestMixin,
-    LoginRequiredMixin
-)
-
-
-NUMBER_OF_POSTS = 10
+    CreateView, DeleteView,
+    DetailView, ListView,
+    UpdateView)
 
 
 User = get_user_model()
 
 
 class IndexListView(ListView):
-    """Представление для главной страницы сайта."""
+    """Главная страница сайта."""
 
     model = Post
-    paginate_by = NUMBER_OF_POSTS
+    paginate_by = POSTS_RELEASE_LIMIT
     template_name = 'blog/index.html'
 
     def get_queryset(self):
@@ -53,7 +39,7 @@ class IndexListView(ListView):
 
 
 class PostDetailView(DetailView):
-    """Представление для отдельного поста."""
+    """Отдельный пост."""
 
     model = Post
     template_name = 'blog/detail.html'
@@ -77,9 +63,9 @@ class PostDetailView(DetailView):
 
 
 class CategoryListView(ListView):
-    """Представление для категорий постов."""
+    """Категория постов."""
 
-    paginate_by = NUMBER_OF_POSTS
+    paginate_by = POSTS_RELEASE_LIMIT
     template_name = 'blog/category.html'
 
     def get_queryset(self):
@@ -103,7 +89,7 @@ class CategoryListView(ListView):
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
-    """Представление добавления нового поста."""
+    """Создание нового поста."""
 
     model = Post
     form_class = PostCreateForm
@@ -121,7 +107,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 
 class PostUpdateView(AuthorTestMixin, ReverseMixin, UpdateView):
-    """Представление редактирования существующего поста."""
+    """Редактирование существующего поста."""
 
     model = Post
     form_class = PostCreateForm
@@ -140,7 +126,7 @@ class PostUpdateView(AuthorTestMixin, ReverseMixin, UpdateView):
 
 
 class PostDeleteView(AuthorTestMixin, DeleteView):
-    """Представление удаления текущего поста."""
+    """Удаление текущего поста."""
 
     model = Post
     template_name = 'blog/create.html'
@@ -161,7 +147,7 @@ class PostDeleteView(AuthorTestMixin, DeleteView):
 
 
 class CommentCreateView(LoginRequiredMixin, ReverseMixin, CreateView):
-    """Представление создания комментария к посту."""
+    """Создание комментария к посту."""
 
     post_obj = None
     model = Comment
@@ -178,7 +164,7 @@ class CommentCreateView(LoginRequiredMixin, ReverseMixin, CreateView):
 
 
 class CommentUpdateView(AuthorTestMixin, ReverseMixin, UpdateView):
-    """Представление для редактирования комментария к посту."""
+    """Редактирование комментария к посту."""
 
     model = Comment
     form_class = CommentForm
@@ -192,7 +178,7 @@ class CommentUpdateView(AuthorTestMixin, ReverseMixin, UpdateView):
 
 
 class CommentDeleteView(AuthorTestMixin, ReverseMixin, DeleteView):
-    """Представления для удаления комментария к посту."""
+    """Удаление комментария к посту."""
 
     model = Comment
     template_name = 'blog/comment.html'
@@ -200,7 +186,7 @@ class CommentDeleteView(AuthorTestMixin, ReverseMixin, DeleteView):
 
 
 class UserCreateView(CreateView):
-    """Представление для создания нового пользователя."""
+    """Создание нового пользователя."""
 
     template_name = 'registration/registration_form.html'
     form_class = UserCreationForm
@@ -208,11 +194,11 @@ class UserCreateView(CreateView):
 
 
 class UserListView(ListView):
-    """Представление профиля пользователя."""
+    """Профиль пользователя."""
 
     model = User
     template_name = 'blog/profile.html'
-    paginate_by = NUMBER_OF_POSTS
+    paginate_by = POSTS_RELEASE_LIMIT
 
     def get_queryset(self):
         return Post.objects.filter(
@@ -229,7 +215,7 @@ class UserListView(ListView):
 
 
 class UserUpdateView(UserPassesTestMixin, UpdateView):
-    """Представление редактирования профиля пользователя."""
+    """Редактирование профиля пользователя."""
 
     model = User
     form_class = UserEditForm
@@ -257,26 +243,37 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
         )
 
 
-@login_required
-def change_password(request, username):
-    # Смена пароля
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = 'registration/password_change.html'
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy('password_change_done')
+        
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        update_session_auth_hash(self.request, form.user)
+        return response
 
-    # # Настроить отправку писем
-    # send_mail(
-    #     subject='Изменение пароля',
-    #     message='Изменение пароля',
-    #     from_email='from@example.com',
-    #     recipient_list=['to@example.com'],
-    #     fail_silently=False,
-    # )
 
-    if request.user.username != username:
-        return redirect("blog:profile", username=username)
+class CustomPasswordChangeDoneView(PasswordChangeDoneView):
+    template_name = 'registration/password_change_done.html'
 
-    form = PasswordChangeForm(request.user, request.POST or None)
-    if form.is_valid():
-        user = form.save()
-        update_session_auth_hash(request, user)
-        return redirect("blog:profile", username=request.user.username)
-    context = {"form": form}
-    return render(request, "registration/password_change_form.html", context)
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'registration/password_reset_form.html'
+    email_template_name = 'registration/password_reset_email.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+    from_email = 'no-reply@yourdomain.com'
+
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'registration/password_reset_done.html'
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'registration/password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'registration/password_reset_complete.html'

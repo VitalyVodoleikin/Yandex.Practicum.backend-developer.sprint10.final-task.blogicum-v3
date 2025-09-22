@@ -4,7 +4,7 @@ from .models import Comment, Post
 
 
 class PostCreateForm(forms.ModelForm):
-    """Создание публикаций"""
+    """Создание публикаций."""
 
     class Meta:
         model = Post
@@ -20,7 +20,7 @@ class PostCreateForm(forms.ModelForm):
 
 
 class UserEditForm(forms.ModelForm):
-    """Редактирование информации о пользователе"""
+    """Редактирование информации о пользователе."""
 
     class Meta:
         model = User
@@ -36,7 +36,7 @@ class UserEditForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
-    """Комментарии"""
+    """Комментарии."""
 
     class Meta:
         model = Comment
