@@ -4,6 +4,8 @@ from .models import Category
 from .models import Location
 from .models import Comment
 from django.contrib.auth.models import Group
+from django.utils.translation import gettext_lazy as _
+
 
 # Register your models here.
 
@@ -21,8 +23,6 @@ class PostAdmin(admin.ModelAdmin):
         'is_published',
         'created_at',
         'author',
-        'category__title',
-        'location__name',
     )
     list_editable = (
         'is_published',
@@ -31,6 +31,14 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ('title', 'text')
     list_filter = ('category__title',)
     list_display_links = ('title',)
+
+    @admin.display(description=_('Категория'))
+    def category_title(self, obj):
+        return obj.category.title if obj.category else None
+
+    @admin.display(description=_('Местоположение'))
+    def location_name(self, obj):
+        return obj.location.name if obj.location else None
 
 
 @admin.register(Category)

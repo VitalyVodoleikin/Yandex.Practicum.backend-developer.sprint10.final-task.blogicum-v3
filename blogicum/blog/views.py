@@ -219,7 +219,7 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
 
     model = User
     form_class = UserEditForm
-    template_name = 'blog/profile_edit.html'
+    template_name = 'blog/user.html'
 
     def get_object(self, queryset=None):
         return get_object_or_404(User, username=self.request.user.username)
