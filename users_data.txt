@@ -8,4 +8,4 @@ username		User1
 name            James
 last_name       Bond
 e-mail			user1@example.com
-password        1user1user1user2
+password        1user1user1user23

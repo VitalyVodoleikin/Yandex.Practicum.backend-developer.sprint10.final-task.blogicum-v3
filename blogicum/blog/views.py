@@ -247,7 +247,7 @@ class CustomPasswordChangeView(PasswordChangeView):
     template_name = 'registration/password_change.html'
     form_class = PasswordChangeForm
     success_url = reverse_lazy('password_change_done')
-        
+
     def form_valid(self, form):
         response = super().form_valid(form)
         update_session_auth_hash(self.request, form.user)
