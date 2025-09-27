@@ -1,24 +1,23 @@
-from .const import POSTS_RELEASE_LIMIT
-from django.contrib.auth import get_user_model
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
-from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.contrib.auth.views import (
-    PasswordChangeView, PasswordChangeDoneView,
-    PasswordResetView, PasswordResetDoneView,
-    PasswordResetConfirmView, PasswordResetCompleteView)
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.views import (PasswordChangeDoneView,
+                                       PasswordChangeView,
+                                       PasswordResetCompleteView,
+                                       PasswordResetConfirmView,
+                                       PasswordResetDoneView,
+                                       PasswordResetView)
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
+
+from .const import POSTS_RELEASE_LIMIT
 from .forms import CommentForm, PostCreateForm, UserEditForm
 from .mixins import AuthorTestMixin, ReverseMixin
 from .models import Category, Comment, Post
 from .utils import add_default_filters, get_selection_of_posts
-from django.views.generic import (
-    CreateView, DeleteView,
-    DetailView, ListView,
-    UpdateView)
-
 
 User = get_user_model()
 

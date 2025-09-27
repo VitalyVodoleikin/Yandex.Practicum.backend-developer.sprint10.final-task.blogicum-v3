@@ -1,9 +1,9 @@
-from django.db import models
 from django.contrib.auth import get_user_model
-from .const import MAX_LENGTH_TITLE_FIELDS, MAX_LENGTH_SELF_TITLE
 from django.contrib.auth.models import User
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from .const import MAX_LENGTH_SELF_TITLE, MAX_LENGTH_TITLE_FIELDS
 
 # Пользователь, эту модель описывать не нужно, она встроена в Django
 User = get_user_model()

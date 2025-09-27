@@ -1,11 +1,8 @@
 from django.contrib import admin
-from .models import Post
-from .models import Category
-from .models import Location
-from .models import Comment
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
+from .models import Category, Comment, Location, Post
 
 # Register your models here.
 
