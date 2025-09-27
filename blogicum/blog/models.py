@@ -10,7 +10,8 @@ User = get_user_model()
 
 
 class PublishAbstractModel(models.Model):
-    # Абстрактная модель с общими полями публикации
+    """Абстрактная модель с общими полями публикации."""
+
     is_published = models.BooleanField(
         default=True,
         verbose_name='Опубликовано',
@@ -26,7 +27,8 @@ class PublishAbstractModel(models.Model):
 
 
 class Post(PublishAbstractModel):
-    # Публикация
+    """Публикация."""
+
     title = models.CharField(
         max_length=MAX_LENGTH_TITLE_FIELDS,
         verbose_name='Заголовок'
@@ -75,13 +77,12 @@ class Post(PublishAbstractModel):
         ordering = ('-pub_date',)
 
         def __str__(self):
-            if len(self.title) > MAX_LENGTH_SELF_TITLE:
-                return f"{self.title[:MAX_LENGTH_SELF_TITLE]}"
-            return f"{self.title}"
+            return f"{self.title[:MAX_LENGTH_SELF_TITLE]}"
 
 
 class Category(PublishAbstractModel):
-    # Тематическая категория
+    """Тематическая категория."""
+
     title = models.CharField(
         max_length=MAX_LENGTH_TITLE_FIELDS,
         verbose_name='Заголовок'
@@ -101,16 +102,14 @@ class Category(PublishAbstractModel):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        default_related_name = 'categories'
 
         def __str__(self):
-            if len(self.title) > MAX_LENGTH_SELF_TITLE:
-                return f"{self.title[:MAX_LENGTH_SELF_TITLE]}"
-            return f"{self.title}"
+            return f"{self.title[:MAX_LENGTH_SELF_TITLE]}"
 
 
 class Location(PublishAbstractModel):
-    # Географическая метка
+    """Географическая метка."""
+
     name = models.CharField(
         max_length=MAX_LENGTH_TITLE_FIELDS,
         verbose_name='Название места'
@@ -119,28 +118,26 @@ class Location(PublishAbstractModel):
     class Meta:
         verbose_name = 'местоположение'
         verbose_name_plural = 'Местоположения'
-        default_related_name = 'locations'
 
         def __str__(self):
-            if len(self.name) > MAX_LENGTH_SELF_TITLE:
-                return f"{self.name[:MAX_LENGTH_SELF_TITLE]}"
-            return f"{self.name}"
+            return f"{self.name[:MAX_LENGTH_SELF_TITLE]}"
 
 
 class Comment(models.Model):
-    # Комментарии
+    """Комментарии."""
 
     text = models.TextField('Ваш комментарий')
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
         related_name='comments',
-        verbose_name='Пост'
+        verbose_name='Комментарий'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Автор поста'
+        related_name='user_comments',
+        verbose_name='Автор комментария'
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -151,6 +148,7 @@ class Comment(models.Model):
         ordering = ['created_at']
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+        default_related_name = 'blogs_comment_related'
 
     def __str__(self):
-        return self.text[:MAX_LENGTH_SELF_TITLE]
+        return f"Комментарий от {self.author.username} к посту {self.post.pk}: {self.text[:MAX_LENGTH_SELF_TITLE]}"
