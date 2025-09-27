@@ -3,10 +3,7 @@ from django.urls import reverse
 
 
 class AuthorTestMixin(UserPassesTestMixin):
-    """
-    Миксин добавляет функцию test_func,
-    которая проверяет является ли пользователь автором поста.
-    """
+    """Добавляет test_func - является ли пользователь автором поста."""
 
     def test_func(self):
         object = self.get_object()
@@ -14,10 +11,7 @@ class AuthorTestMixin(UserPassesTestMixin):
 
 
 class ReverseMixin:
-    """
-    Миксин добавляет функцию get_success_url,
-    которая перенаправляет пользователя на страницу поста.
-    """
+    """Добавляет get_success_url: перенаправление на страницу поста."""
 
     def get_success_url(self):
         return reverse(
