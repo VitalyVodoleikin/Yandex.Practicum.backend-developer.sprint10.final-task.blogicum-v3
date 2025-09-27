@@ -18,6 +18,7 @@ from .forms import CommentForm, PostCreateForm, UserEditForm
 from .mixins import AuthorTestMixin, ReverseMixin
 from .models import Category, Comment, Post
 from .utils import add_default_filters, get_selection_of_posts
+from blogicum.settings import FROM_EMAIL
 
 User = get_user_model()
 
@@ -105,7 +106,12 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PostUpdateView(AuthorTestMixin, ReverseMixin, UpdateView):
+class PostUpdateView(
+    LoginRequiredMixin,
+    AuthorTestMixin,
+    ReverseMixin,
+    UpdateView
+):
     """Редактирование существующего поста."""
 
     model = Post
@@ -122,9 +128,34 @@ class PostUpdateView(AuthorTestMixin, ReverseMixin, UpdateView):
 
     def handle_no_permission(self):
         return redirect(self.get_success_url())
+    
+
+# # ---------->
+# class PostUpdateView(AuthorTestMixin, ReverseMixin, UpdateView):
+#     """Редактирование существующего поста."""
+
+#     model = Post
+#     form_class = PostCreateForm
+#     template_name = 'blog/create.html'
+#     pk_url_kwarg = 'post_id'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         instance = get_object_or_404(Post, pk=self.kwargs['post_id'])
+#         form = PostCreateForm(self.request.POST or None, instance=instance)
+#         context['form'] = form
+#         return context
+
+#     def handle_no_permission(self):
+#         return redirect(self.get_success_url())
+# # <----------
 
 
-class PostDeleteView(AuthorTestMixin, DeleteView):
+class PostDeleteView(
+    LoginRequiredMixin,
+    AuthorTestMixin,
+    DeleteView
+):
     """Удаление текущего поста."""
 
     model = Post
@@ -143,6 +174,29 @@ class PostDeleteView(AuthorTestMixin, DeleteView):
             'blog:profile',
             kwargs={'username': self.request.user.username}
         )
+    
+
+# # ----------->
+# class PostDeleteView(AuthorTestMixin, DeleteView):
+#     """Удаление текущего поста."""
+
+#     model = Post
+#     template_name = 'blog/create.html'
+#     pk_url_kwarg = 'post_id'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         instance = get_object_or_404(Post, pk=self.kwargs['post_id'])
+#         form = PostCreateForm(self.request.POST or None, instance=instance)
+#         context['form'] = form
+#         return context
+
+#     def get_success_url(self):
+#         return reverse(
+#             'blog:profile',
+#             kwargs={'username': self.request.user.username}
+#         )
+# # <-----------
 
 
 class CommentCreateView(LoginRequiredMixin, ReverseMixin, CreateView):
@@ -162,7 +216,12 @@ class CommentCreateView(LoginRequiredMixin, ReverseMixin, CreateView):
         return super().form_valid(form)
 
 
-class CommentUpdateView(AuthorTestMixin, ReverseMixin, UpdateView):
+class CommentUpdateView(
+    LoginRequiredMixin,
+    AuthorTestMixin,
+    ReverseMixin,
+    UpdateView
+):
     """Редактирование комментария к посту."""
 
     model = Comment
@@ -176,12 +235,43 @@ class CommentUpdateView(AuthorTestMixin, ReverseMixin, UpdateView):
         )
 
 
-class CommentDeleteView(AuthorTestMixin, ReverseMixin, DeleteView):
+# # ---------->
+# class CommentUpdateView(AuthorTestMixin, ReverseMixin, UpdateView):
+#     """Редактирование комментария к посту."""
+
+#     model = Comment
+#     form_class = CommentForm
+#     template_name = 'blog/comment.html'
+
+#     def get_object(self, queryset=None):
+#         return get_object_or_404(
+#             Comment,
+#             id=self.kwargs['comment_id'],
+#         )
+# # <----------
+
+
+class CommentDeleteView(
+    LoginRequiredMixin,
+    AuthorTestMixin,
+    ReverseMixin,
+    DeleteView
+):
     """Удаление комментария к посту."""
 
     model = Comment
     template_name = 'blog/comment.html'
     pk_url_kwarg = 'comment_id'
+
+
+# # ---------->
+# class CommentDeleteView(AuthorTestMixin, ReverseMixin, DeleteView):
+#     """Удаление комментария к посту."""
+
+#     model = Comment
+#     template_name = 'blog/comment.html'
+#     pk_url_kwarg = 'comment_id'
+# # <----------
 
 
 class UserCreateView(CreateView):
@@ -221,15 +311,7 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
     template_name = 'blog/user.html'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(User, username=self.request.user.username)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        instance = get_object_or_404(User, id=self.request.user.id)
-        form = UserEditForm(self.request.POST or None, instance=instance)
-        context['profile'] = instance
-        context['form'] = form
-        return context
+        return get_object_or_404(User, username=self.request.user)
 
     def test_func(self):
         object = self.get_object()
@@ -241,6 +323,36 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
             kwargs={'username': self.request.user.username}
         )
 
+
+# # ---------->
+# class UserUpdateView(UserPassesTestMixin, UpdateView):
+#     """Редактирование профиля пользователя."""
+
+#     model = User
+#     form_class = UserEditForm
+#     template_name = 'blog/user.html'
+
+#     def get_object(self, queryset=None):
+#         return get_object_or_404(User, username=self.request.user.username)
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         instance = get_object_or_404(User, id=self.request.user.id)
+#         form = UserEditForm(self.request.POST or None, instance=instance)
+#         context['profile'] = instance
+#         context['form'] = form
+#         return context
+
+#     def test_func(self):
+#         object = self.get_object()
+#         return object == self.request.user
+
+#     def get_success_url(self):
+#         return reverse(
+#             'blog:profile',
+#             kwargs={'username': self.request.user.username}
+#         )
+# # <----------
 
 class CustomPasswordChangeView(PasswordChangeView):
     template_name = 'registration/password_change.html'
@@ -262,7 +374,7 @@ class CustomPasswordResetView(PasswordResetView):
     email_template_name = 'registration/password_reset_email.html'
     subject_template_name = 'registration/password_reset_subject.txt'
     success_url = reverse_lazy('password_reset_done')
-    from_email = 'no-reply@yourdomain.com'
+    from_email = FROM_EMAIL
 
 
 class CustomPasswordResetDoneView(PasswordResetDoneView):

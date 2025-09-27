@@ -10,9 +10,10 @@ class PostCreateForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        exclude = ['is_published', 'created_at', 'author', 'is_scheduled']
+        exclude = ['author', 'is_scheduled']
         widgets = {
             'pub_date': forms.DateTimeInput(
+                format='%Y-%m-%dT%H:%M:%S',
                 attrs={'type': 'datetime-local'}
             ),
             'image': forms.ClearableFileInput(
