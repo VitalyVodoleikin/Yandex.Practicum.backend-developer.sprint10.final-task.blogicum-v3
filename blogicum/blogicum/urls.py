@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView
 
 from pages.views import csrf_failure
 
-from .forms import CustomUserCreationForm
+from blog.forms import CustomUserCreationForm
 
 handler500 = 'pages.views.server_error'
 handler404 = 'pages.views.page_not_found'
