@@ -15,7 +15,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 
 from .const import POSTS_RELEASE_LIMIT
 from .forms import CommentForm, PostCreateForm, UserEditForm
-from .mixins import AuthorTestMixin, ReverseMixin
+from .mixins import AuthorTestMixin, ReverseMixin, BaseMyUserMixin
 from .models import Category, Comment, Post
 from .utils import add_default_filters, get_selection_of_posts
 from blogicum.settings import FROM_EMAIL
@@ -215,17 +215,7 @@ class UserCreateView(CreateView):
     success_url = reverse_lazy('blog:index')
 
 
-# >>>>>>>>>>
-class BaseUserMixin:
-    """Базовый миксин для работы с пользователями"""
-
-    def get_user_object(self):
-        """Получение объекта пользователя"""
-        username = self.kwargs.get('username')
-        return get_object_or_404(User, username=username)
-
-
-class UserListView(BaseUserMixin, ListView):
+class UserListView(BaseMyUserMixin, ListView):
     """Профиль пользователя."""
 
     model = User
@@ -269,58 +259,6 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             'blog:profile',
             kwargs={'username': self.request.user.username}
         )
-# <<<<<<<<<<
-
-
-# # ---------->>>>>>>>>>
-# class UserListView(ListView):
-#     """Профиль пользователя."""
-
-#     model = User
-#     template_name = 'blog/profile.html'
-#     paginate_by = POSTS_RELEASE_LIMIT
-    
-#     def get_queryset(self):
-#         username = self.kwargs['username']
-#         author = get_object_or_404(User, username=username)
-#         return get_posts_queryset(
-#             user=self.request.user,
-#             author=author,
-#             apply_filters=True,
-#             count_comments=True
-#         )
-    
-#     # ----------> Доделать!!!
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         profile = get_object_or_404(User, username=self.kwargs['username'])
-#         context['profile'] = profile
-#         return context
-#     # <----------
-
-
-# class UserUpdateView(UserPassesTestMixin, UpdateView):
-#     """Редактирование профиля пользователя."""
-
-#     model = User
-#     form_class = UserEditForm
-#     template_name = 'blog/user.html'
-
-#     def get_object(self, queryset=None):
-#         return get_object_or_404(User, username=self.request.user)
-
-# 	# ----------> Доделать!!!
-#     def test_func(self):
-#         object = self.get_object()
-#         return object == self.request.user
-#     # <----------
-
-#     def get_success_url(self):
-#         return reverse(
-#             'blog:profile',
-#             kwargs={'username': self.request.user.username}
-#         )
-# # <<<<<<<<<<----------  
 
 
 class CustomPasswordChangeView(PasswordChangeView):
