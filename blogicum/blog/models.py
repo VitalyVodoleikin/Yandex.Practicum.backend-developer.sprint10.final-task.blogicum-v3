@@ -148,7 +148,7 @@ class Comment(models.Model):
         ordering = ['created_at']
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-        default_related_name = 'blogs_comment_related'
+        # default_related_name = 'blogs_comment_related'
 
     def __str__(self):
         return f"Комментарий от {self.author.username} к посту {self.post.pk}: {self.text[:MAX_LENGTH_SELF_TITLE]}"
