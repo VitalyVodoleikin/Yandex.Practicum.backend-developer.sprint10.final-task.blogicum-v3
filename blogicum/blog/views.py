@@ -62,6 +62,32 @@ class PostDetailView(DetailView):
         return context
 
 
+# # ---------->
+# class PostDetailView(DetailView):
+#     """Отдельный пост."""
+
+#     model = Post
+#     template_name = 'blog/detail.html'
+#     pk_url_kwarg = 'post_id'
+
+#     def get_object(self):
+#         obj = get_selection_of_posts('author').filter(
+#             id=self.kwargs['post_id']
+#         )
+#         if obj and not obj[0].author == self.request.user:
+#             filters = add_default_filters()
+#         else:
+#             filters = dict()
+#         return get_object_or_404(obj, **filters)
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['form'] = CommentForm()
+#         context['comments'] = self.object.comments.select_related('author')
+#         return context
+# # <----------
+
+
 class CategoryListView(ListView):
     """Категория постов."""
 
@@ -96,7 +122,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     template_name = 'blog/create.html'
 
     def get_success_url(self):
-        return reverse_lazy(
+        return reverse(
             'blog:profile',
             kwargs={'username': self.request.user.username}
         )
@@ -104,6 +130,26 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+
+# # ---------->
+# class PostCreateView(LoginRequiredMixin, CreateView):
+#     """Создание нового поста."""
+
+#     model = Post
+#     form_class = PostCreateForm
+#     template_name = 'blog/create.html'
+
+#     def get_success_url(self):
+#         return reverse_lazy(
+#             'blog:profile',
+#             kwargs={'username': self.request.user.username}
+#         )
+
+#     def form_valid(self, form):
+#         form.instance.author = self.request.user
+#         return super().form_valid(form)
+# # <----------
 
 
 class PostUpdateView(
@@ -118,13 +164,6 @@ class PostUpdateView(
     form_class = PostCreateForm
     template_name = 'blog/create.html'
     pk_url_kwarg = 'post_id'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        instance = get_object_or_404(Post, pk=self.kwargs['post_id'])
-        form = PostCreateForm(self.request.POST or None, instance=instance)
-        context['form'] = form
-        return context
 
     def handle_no_permission(self):
         return redirect(self.get_success_url())
@@ -165,7 +204,7 @@ class PostDeleteView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         instance = get_object_or_404(Post, pk=self.kwargs['post_id'])
-        form = PostCreateForm(self.request.POST or None, instance=instance)
+        form = PostCreateForm(self.request.POST, instance=instance)
         context['form'] = form
         return context
 
