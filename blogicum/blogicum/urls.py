@@ -4,8 +4,6 @@ from django.contrib import admin
 from django.urls import include, path, reverse_lazy
 from django.views.generic.edit import CreateView
 
-from pages.views import csrf_failure
-
 from blog.forms import CustomUserCreationForm
 
 handler500 = 'pages.views.server_error'

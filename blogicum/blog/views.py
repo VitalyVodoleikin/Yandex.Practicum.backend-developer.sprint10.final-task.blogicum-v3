@@ -7,20 +7,19 @@ from django.contrib.auth.views import (PasswordChangeDoneView,
                                        PasswordResetConfirmView,
                                        PasswordResetDoneView,
                                        PasswordResetView)
-from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
+from blogicum.settings import FROM_EMAIL
+
 from .const import POSTS_RELEASE_LIMIT
 from .forms import CommentForm, PostCreateForm, UserEditForm
-from .mixins import AuthorTestMixin, ReverseMixin, BaseMyUserMixin
+from .mixins import AuthorTestMixin, BaseMyUserMixin, ReverseMixin
 from .models import Category, Comment, Post
-from .utils import add_default_filters, get_selection_of_posts
-from blogicum.settings import FROM_EMAIL
-from .utils import get_posts_queryset
-
+from .utils import (add_default_filters, get_posts_queryset,
+                    get_selection_of_posts)
 
 User = get_user_model()
 
@@ -31,7 +30,7 @@ class IndexListView(ListView):
     model = Post
     paginate_by = POSTS_RELEASE_LIMIT
     template_name = 'blog/index.html'
-    
+
     def get_queryset(self):
         return get_posts_queryset(
             user=self.request.user,
@@ -69,7 +68,7 @@ class CategoryListView(ListView):
 
     paginate_by = POSTS_RELEASE_LIMIT
     template_name = 'blog/category.html'
-    
+
     def get_queryset(self):
         category_slug = self.kwargs['category_slug']
         category = get_object_or_404(
@@ -83,7 +82,7 @@ class CategoryListView(ListView):
             apply_filters=True,
             count_comments=True
         )
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['category'] = get_object_or_404(
@@ -142,9 +141,7 @@ class PostDeleteView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # ----------> Доделать!!!
         instance = get_object_or_404(Post, pk=self.kwargs['post_id'])
-        # <----------
         form = PostCreateForm(self.request.POST, instance=instance)
         context['form'] = form
         return context
@@ -185,13 +182,11 @@ class CommentUpdateView(
     form_class = CommentForm
     template_name = 'blog/comment.html'
 
-    # ----------> Доделать!!!
     def get_object(self, queryset=None):
         return get_object_or_404(
             Comment,
             id=self.kwargs['comment_id'],
         )
-    # <----------
 
 
 class CommentDeleteView(

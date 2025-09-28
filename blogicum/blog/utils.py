@@ -1,7 +1,8 @@
+from django.db.models import Count
 from django.db.models.query import QuerySet
 from django.utils import timezone
+
 from .models import Post
-from django.db.models import Count
 
 
 def get_selection_of_posts(field: str) -> QuerySet:
@@ -27,19 +28,18 @@ def get_posts_queryset(
     count_comments=True,
     base_queryset=None
 ):
-    """Формирует набора постов с различными настройками."""
 
     if base_queryset is None:
         queryset = Post.objects.all()
     else:
         queryset = base_queryset
-    
+
     if author:
         queryset = queryset.filter(author=author)
-    
+
     if category:
         queryset = queryset.filter(category=category)
-    
+
     if apply_filters:
         filter_dict = {
             'is_published': True,
@@ -50,8 +50,8 @@ def get_posts_queryset(
             # Если пользователь является автором, показываем все его посты
             filter_dict = {}
         queryset = queryset.filter(**filter_dict)
-    
+
     if count_comments:
         queryset = queryset.annotate(comment_count=Count('comments'))
-    
+
     return queryset.order_by('-pub_date')

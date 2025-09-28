@@ -48,7 +48,7 @@ class CommentForm(forms.ModelForm):
 
 class CustomUserCreationForm(UserCreationForm):
     """Создание пользователя."""
-    
+
     first_name = forms.CharField(
         max_length=150,
         required=False,

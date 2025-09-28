@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 from .const import MAX_LENGTH_SELF_TITLE, MAX_LENGTH_TITLE_FIELDS
 
-
 User = get_user_model()
 
 
@@ -150,4 +149,6 @@ class Comment(models.Model):
         verbose_name_plural = 'Комментарии'
 
     def __str__(self):
-        return f"Комментарий от {self.author.username} к посту {self.post.pk}: {self.text[:MAX_LENGTH_SELF_TITLE]}"
+        return f"Комментарий от {
+            self.author.username
+        } к посту {self.post.pk}: {self.text[:MAX_LENGTH_SELF_TITLE]}"
