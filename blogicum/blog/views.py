@@ -19,6 +19,8 @@ from .mixins import AuthorTestMixin, ReverseMixin
 from .models import Category, Comment, Post
 from .utils import add_default_filters, get_selection_of_posts
 from blogicum.settings import FROM_EMAIL
+from .utils import get_posts_queryset
+
 
 User = get_user_model()
 
@@ -29,13 +31,30 @@ class IndexListView(ListView):
     model = Post
     paginate_by = POSTS_RELEASE_LIMIT
     template_name = 'blog/index.html'
-
+    
     def get_queryset(self):
-        return Post.objects.filter(
-            **add_default_filters()
-        ).annotate(
-            comment_count=Count('comments')
-        ).order_by('-pub_date')
+        return get_posts_queryset(
+            user=self.request.user,
+            apply_filters=True,
+            count_comments=True
+        )
+    
+
+# # ---------->
+# class IndexListView(ListView):
+#     """Главная страница сайта."""
+
+#     model = Post
+#     paginate_by = POSTS_RELEASE_LIMIT
+#     template_name = 'blog/index.html'
+
+#     def get_queryset(self):
+#         return Post.objects.filter(
+#             **add_default_filters()
+#         ).annotate(
+#             comment_count=Count('comments')
+#         ).order_by('-pub_date')
+# # <----------
 
 
 class PostDetailView(DetailView):
@@ -93,25 +112,57 @@ class CategoryListView(ListView):
 
     paginate_by = POSTS_RELEASE_LIMIT
     template_name = 'blog/category.html'
-
+    
     def get_queryset(self):
-        queryset = get_selection_of_posts('category').filter(
-            category__slug=self.kwargs['category_slug'],
-        ).filter(
-            **add_default_filters()
-        ).annotate(
-            comment_count=Count('comments')
-        ).order_by('-pub_date')
-        return queryset
-
+        category_slug = self.kwargs['category_slug']
+        category = get_object_or_404(
+            Category,
+            slug=category_slug,
+            is_published=True
+        )
+        return get_posts_queryset(
+            user=self.request.user,
+            category=category,
+            apply_filters=True,
+            count_comments=True
+        )
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['category'] = get_object_or_404(
             Category,
             slug=self.kwargs['category_slug'],
-            is_published=True,
+            is_published=True
         )
         return context
+    
+
+# # ---------->
+# class CategoryListView(ListView):
+#     """Категория постов."""
+
+#     paginate_by = POSTS_RELEASE_LIMIT
+#     template_name = 'blog/category.html'
+
+#     def get_queryset(self):
+#         queryset = get_selection_of_posts('category').filter(
+#             category__slug=self.kwargs['category_slug'],
+#         ).filter(
+#             **add_default_filters()
+#         ).annotate(
+#             comment_count=Count('comments')
+#         ).order_by('-pub_date')
+#         return queryset
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['category'] = get_object_or_404(
+#             Category,
+#             slug=self.kwargs['category_slug'],
+#             is_published=True,
+#         )
+#         return context
+# # <----------
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -327,19 +378,45 @@ class UserListView(ListView):
     model = User
     template_name = 'blog/profile.html'
     paginate_by = POSTS_RELEASE_LIMIT
-
+    
     def get_queryset(self):
-        return Post.objects.filter(
-            author=get_object_or_404(User, username=self.kwargs['username']).id
-        ).annotate(
-            comment_count=Count('comments')
-        ).order_by('-pub_date')
-
+        username = self.kwargs['username']
+        author = get_object_or_404(User, username=username)
+        return get_posts_queryset(
+            user=self.request.user,
+            author=author,
+            apply_filters=True,
+            count_comments=True
+        )
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = get_object_or_404(User, username=self.kwargs['username'])
         context['profile'] = profile
         return context
+
+
+# # ---------->
+# class UserListView(ListView):
+#     """Профиль пользователя."""
+
+#     model = User
+#     template_name = 'blog/profile.html'
+#     paginate_by = POSTS_RELEASE_LIMIT
+
+#     def get_queryset(self):
+#         return Post.objects.filter(
+#             author=get_object_or_404(User, username=self.kwargs['username']).id
+#         ).annotate(
+#             comment_count=Count('comments')
+#         ).order_by('-pub_date')
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         profile = get_object_or_404(User, username=self.kwargs['username'])
+#         context['profile'] = profile
+#         return context
+# # <----------
 
 
 class UserUpdateView(UserPassesTestMixin, UpdateView):
