@@ -50,13 +50,13 @@ class CustomUserCreationForm(UserCreationForm):
     """Создание пользователя."""
     
     first_name = forms.CharField(
-        max_length=30,
+        max_length=150,
         required=False,
         help_text='Не обязательно.',
         label='Имя'
     )
     last_name = forms.CharField(
-        max_length=30,
+        max_length=150,
         required=False,
         help_text='Не обязательно.',
         label='Фамилия'

@@ -14,11 +14,11 @@ urlpatterns = [
     path('profile/<str:username>/', views.UserListView.as_view(),
          name='profile'),
 
-
-
+    
+	# ----------> Доделать!!!
     path('edit_profile/<str:username>/', views.UserUpdateView.as_view(),
          name='edit_profile'),
-
+	# <----------
 
 
     path('posts/<int:post_id>/edit/', views.PostUpdateView.as_view(),

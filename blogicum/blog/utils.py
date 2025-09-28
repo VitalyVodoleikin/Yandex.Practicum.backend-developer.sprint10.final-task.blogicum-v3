@@ -27,6 +27,7 @@ def get_posts_queryset(
     count_comments=True,
     base_queryset=None
 ):
+    """Формирует набора постов с различными настройками."""
 
     if base_queryset is None:
         queryset = Post.objects.all()

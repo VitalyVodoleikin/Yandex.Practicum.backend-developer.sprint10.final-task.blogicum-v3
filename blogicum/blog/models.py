@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .const import MAX_LENGTH_SELF_TITLE, MAX_LENGTH_TITLE_FIELDS
 
-# Пользователь, эту модель описывать не нужно, она встроена в Django
+
 User = get_user_model()
 
 
@@ -124,7 +124,7 @@ class Location(PublishAbstractModel):
 
 
 class Comment(models.Model):
-    """Комментарии."""
+    """Комментарий."""
 
     text = models.TextField('Ваш комментарий')
     post = models.ForeignKey(
@@ -148,7 +148,6 @@ class Comment(models.Model):
         ordering = ['created_at']
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-        # default_related_name = 'blogs_comment_related'
 
     def __str__(self):
         return f"Комментарий от {self.author.username} к посту {self.post.pk}: {self.text[:MAX_LENGTH_SELF_TITLE]}"

@@ -142,7 +142,9 @@ class PostDeleteView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # ----------> Доделать!!!
         instance = get_object_or_404(Post, pk=self.kwargs['post_id'])
+        # <----------
         form = PostCreateForm(self.request.POST, instance=instance)
         context['form'] = form
         return context
@@ -183,11 +185,13 @@ class CommentUpdateView(
     form_class = CommentForm
     template_name = 'blog/comment.html'
 
+    # ----------> Доделать!!!
     def get_object(self, queryset=None):
         return get_object_or_404(
             Comment,
             id=self.kwargs['comment_id'],
         )
+    # <----------
 
 
 class CommentDeleteView(
@@ -228,11 +232,13 @@ class UserListView(ListView):
             count_comments=True
         )
     
+    # ----------> Доделать!!!
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = get_object_or_404(User, username=self.kwargs['username'])
         context['profile'] = profile
         return context
+    # <----------
 
 
 class UserUpdateView(UserPassesTestMixin, UpdateView):
@@ -245,9 +251,11 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
     def get_object(self, queryset=None):
         return get_object_or_404(User, username=self.request.user)
 
+	# ----------> Доделать!!!
     def test_func(self):
         object = self.get_object()
         return object == self.request.user
+    # <----------
 
     def get_success_url(self):
         return reverse(
