@@ -215,53 +215,112 @@ class UserCreateView(CreateView):
     success_url = reverse_lazy('blog:index')
 
 
-class UserListView(ListView):
+# >>>>>>>>>>
+class BaseUserMixin:
+    """Базовый миксин для работы с пользователями"""
+
+    def get_user_object(self):
+        """Получение объекта пользователя"""
+        username = self.kwargs.get('username')
+        return get_object_or_404(User, username=username)
+
+
+class UserListView(BaseUserMixin, ListView):
     """Профиль пользователя."""
 
     model = User
     template_name = 'blog/profile.html'
     paginate_by = POSTS_RELEASE_LIMIT
-    
+
     def get_queryset(self):
-        username = self.kwargs['username']
-        author = get_object_or_404(User, username=username)
+        author = self.get_user_object()
         return get_posts_queryset(
             user=self.request.user,
             author=author,
             apply_filters=True,
             count_comments=True
         )
-    
-    # ----------> Доделать!!!
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        profile = get_object_or_404(User, username=self.kwargs['username'])
-        context['profile'] = profile
+        context['profile'] = self.get_user_object()
         return context
-    # <----------
 
 
-class UserUpdateView(UserPassesTestMixin, UpdateView):
+class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Редактирование профиля пользователя."""
 
     model = User
     form_class = UserEditForm
     template_name = 'blog/user.html'
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(User, username=self.request.user)
-
-	# ----------> Доделать!!!
     def test_func(self):
-        object = self.get_object()
-        return object == self.request.user
-    # <----------
+        """Проверка прав доступа"""
+        user = self.get_object()
+        return self.request.user == user
+
+    def get_object(self, queryset=None):
+        """Получение текущего пользователя"""
+        return self.request.user
 
     def get_success_url(self):
+        """URL после успешного обновления"""
         return reverse(
             'blog:profile',
             kwargs={'username': self.request.user.username}
         )
+# <<<<<<<<<<
+
+
+# # ---------->>>>>>>>>>
+# class UserListView(ListView):
+#     """Профиль пользователя."""
+
+#     model = User
+#     template_name = 'blog/profile.html'
+#     paginate_by = POSTS_RELEASE_LIMIT
+    
+#     def get_queryset(self):
+#         username = self.kwargs['username']
+#         author = get_object_or_404(User, username=username)
+#         return get_posts_queryset(
+#             user=self.request.user,
+#             author=author,
+#             apply_filters=True,
+#             count_comments=True
+#         )
+    
+#     # ----------> Доделать!!!
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         profile = get_object_or_404(User, username=self.kwargs['username'])
+#         context['profile'] = profile
+#         return context
+#     # <----------
+
+
+# class UserUpdateView(UserPassesTestMixin, UpdateView):
+#     """Редактирование профиля пользователя."""
+
+#     model = User
+#     form_class = UserEditForm
+#     template_name = 'blog/user.html'
+
+#     def get_object(self, queryset=None):
+#         return get_object_or_404(User, username=self.request.user)
+
+# 	# ----------> Доделать!!!
+#     def test_func(self):
+#         object = self.get_object()
+#         return object == self.request.user
+#     # <----------
+
+#     def get_success_url(self):
+#         return reverse(
+#             'blog:profile',
+#             kwargs={'username': self.request.user.username}
+#         )
+# # <<<<<<<<<<----------  
 
 
 class CustomPasswordChangeView(PasswordChangeView):
