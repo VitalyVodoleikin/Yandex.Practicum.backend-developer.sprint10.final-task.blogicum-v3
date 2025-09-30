@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+from .const import MAX_NAME_LENGTH
 from .models import Comment, Post
 
 
@@ -10,7 +11,7 @@ class PostCreateForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        exclude = ['author', 'is_scheduled']
+        exclude = ['author']
         widgets = {
             'pub_date': forms.DateTimeInput(
                 format='%Y-%m-%dT%H:%M:%S',
@@ -50,13 +51,13 @@ class CustomUserCreationForm(UserCreationForm):
     """Создание пользователя."""
 
     first_name = forms.CharField(
-        max_length=150,
+        max_length=MAX_NAME_LENGTH,
         required=False,
         help_text='Не обязательно.',
         label='Имя'
     )
     last_name = forms.CharField(
-        max_length=150,
+        max_length=MAX_NAME_LENGTH,
         required=False,
         help_text='Не обязательно.',
         label='Фамилия'

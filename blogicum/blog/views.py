@@ -16,7 +16,7 @@ from blogicum.settings import FROM_EMAIL
 
 from .const import POSTS_RELEASE_LIMIT
 from .forms import CommentForm, PostCreateForm, UserEditForm
-from .mixins import AuthorTestMixin, BaseMyUserMixin, ReverseMixin
+from .mixins import AuthorTestMixin, BaseUserMixin, ReverseMixin
 from .models import Category, Comment, Post
 from .utils import (add_default_filters, get_posts_queryset,
                     get_selection_of_posts)
@@ -210,7 +210,7 @@ class UserCreateView(CreateView):
     success_url = reverse_lazy('blog:index')
 
 
-class UserListView(BaseMyUserMixin, ListView):
+class UserListView(BaseUserMixin, ListView):
     """Профиль пользователя."""
 
     model = User

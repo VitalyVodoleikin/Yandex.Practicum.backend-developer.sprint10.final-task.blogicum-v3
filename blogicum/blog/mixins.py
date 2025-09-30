@@ -24,7 +24,7 @@ class ReverseMixin:
         )
 
 
-class BaseMyUserMixin:
+class BaseUserMixin:
     """Миксин для работы с пользователями"""
 
     def get_user_object(self):
