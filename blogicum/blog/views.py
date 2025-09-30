@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (PasswordChangeDoneView,
                                        PasswordChangeView,
                                        PasswordResetCompleteView,
@@ -12,7 +12,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
-from blogicum.settings import FROM_EMAIL
+# from blogicum.settings import FROM_EMAIL
+from django.conf import settings
 
 from .const import POSTS_RELEASE_LIMIT
 from .forms import CommentForm, PostCreateForm, UserEditForm
@@ -232,7 +233,7 @@ class UserListView(BaseUserMixin, ListView):
         return context
 
 
-class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирование профиля пользователя."""
 
     model = User
@@ -276,7 +277,7 @@ class CustomPasswordResetView(PasswordResetView):
     email_template_name = 'registration/password_reset_email.html'
     subject_template_name = 'registration/password_reset_subject.txt'
     success_url = reverse_lazy('password_reset_done')
-    from_email = FROM_EMAIL
+    from_email = settings.FROM_EMAIL
 
 
 class CustomPasswordResetDoneView(PasswordResetDoneView):
