@@ -34,6 +34,7 @@ class IndexListView(ListView):
 
     def get_queryset(self):
         return get_posts_queryset(
+            # Три строки аргументов лишние.
             user=self.request.user,
             apply_filters=True,
             count_comments=True
@@ -48,14 +49,14 @@ class PostDetailView(DetailView):
     pk_url_kwarg = 'post_id'
 
     def get_object(self):
-        obj = get_selection_of_posts('author').filter(
+        obj = get_selection_of_posts('author').filter(  # Есть метод get_object() родителя с этой логикой, достаточно вызвать его вместо своего запроса.
             id=self.kwargs['post_id']
         )
-        if obj and not obj[0].author == self.request.user:
-            filters = add_default_filters()
-        else:
+        if obj and not obj[0].author == self.request.user:  # if obj.author == self.request.user:
+            filters = add_default_filters()  # Возвращаем obj
+        else:  # Лишние два строки.
             filters = dict()
-        return get_object_or_404(obj, **filters)
+        return get_object_or_404(obj, **filters)  # Первым аргументом дергаем get_posts_queryset, дофильтровываем по "id"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -78,7 +79,7 @@ class CategoryListView(ListView):
             is_published=True
         )
         return get_posts_queryset(
-            user=self.request.user,
+            user=self.request.user,  # В base_queryset передавай сразу посты категории. Посты категории можно получить при помощи related_name. Пример как пользоваться.
             category=category,
             apply_filters=True,
             count_comments=True
@@ -142,7 +143,7 @@ class PostDeleteView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        instance = get_object_or_404(Post, pk=self.kwargs['post_id'])
+        instance = get_object_or_404(Post, pk=self.kwargs['post_id'])  # Лишний ручной запрос. Есть метод get_object() родителя с этой логикой, достаточно вызвать его вместо своего запроса. 
         form = PostCreateForm(self.request.POST, instance=instance)
         context['form'] = form
         return context
@@ -162,6 +163,7 @@ class CommentCreateView(LoginRequiredMixin, ReverseMixin, CreateView):
     form_class = CommentForm
 
     def dispatch(self, request, *args, **kwargs):
+        # dispatch для других целей. Ссылка на обсуждение. Точно не для создания атрибутов. Найти пост и передать в форму можно в form_valid в строке с form.instance.post.
         self.post_obj = get_object_or_404(Post, pk=kwargs['post_id'])
         return super().dispatch(request, *args, **kwargs)
 
@@ -184,6 +186,7 @@ class CommentUpdateView(
     template_name = 'blog/comment.html'
 
     def get_object(self, queryset=None):
+        # Лишнее переопределение метода. Чтобы родительский метод отрабатывал(под капотом), нужно в атрибуте pk_url_kwarg определить переменную, из которой класс получает id объекта.
         return get_object_or_404(
             Comment,
             id=self.kwargs['comment_id'],
@@ -221,10 +224,10 @@ class UserListView(BaseUserMixin, ListView):
     def get_queryset(self):
         author = self.get_user_object()
         return get_posts_queryset(
-            user=self.request.user,
+            user=self.request.user,  # В base_queryset передавай сразу посты автор. Посты автора можно получить при помощи related_name. Пример как пользоваться.
             author=author,
-            apply_filters=True,
-            count_comments=True
+            apply_filters=True,  # Передавай логическое выражение "пользователь не автор".
+            count_comments=True  # Лишняя строка.
         )
 
     def get_context_data(self, **kwargs):
@@ -291,3 +294,8 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'registration/password_reset_complete.html'
+
+
+
+
+# Добавление комментариев ревьюера

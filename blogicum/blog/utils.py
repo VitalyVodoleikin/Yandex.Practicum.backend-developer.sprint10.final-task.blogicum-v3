@@ -21,9 +21,9 @@ def add_default_filters() -> dict:
 
 
 def get_posts_queryset(
-    user=None,
-    author=None,
-    category=None,
+    user=None,  # Лишний параметр.
+    author=None,  # Лишний параметр.
+    category=None,  # Лишний параметр.
     apply_filters=True,
     count_comments=True,
     base_queryset=None
@@ -31,9 +31,11 @@ def get_posts_queryset(
 
     queryset = base_queryset or Post.objects.all()
 
+    # Лишняя проверка. Передавай в функцию сразу посты автора. Посты автора можно получить при помощи related_name. Пример как пользоваться.
     if author:
         queryset = queryset.filter(author=author)
 
+    # Лишняя проверка. Передавай в функцию сразу посты категории. Посты категории можно получить при помощи related_name. Пример как пользоваться.
     if category:
         queryset = queryset.filter(category=category)
 
@@ -43,7 +45,7 @@ def get_posts_queryset(
             'pub_date__lte': timezone.now(),
             'category__is_published': True
         }
-        if user and user.is_authenticated and user == author:
+        if user and user.is_authenticated and user == author:  # Лишняя проверка, передавай логическое выражение при вызове в параметр apply_filters
             # Если пользователь является автором, показываем все его посты
             filter_dict = {}
         queryset = queryset.filter(**filter_dict)
@@ -123,3 +125,8 @@ def get_posts_queryset(
 
 #     return queryset.order_by('-pub_date')
 # # <<<<<<<<<<==========
+
+
+
+
+# Добавление комментариев ревьюера
