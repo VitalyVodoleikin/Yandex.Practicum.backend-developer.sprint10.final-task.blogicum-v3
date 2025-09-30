@@ -240,10 +240,10 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     form_class = UserEditForm
     template_name = 'blog/user.html'
 
-    def test_func(self):
-        """Проверка прав доступа"""
-        user = self.get_object()
-        return self.request.user == user
+    # def test_func(self):
+    #     """Проверка прав доступа"""
+    #     user = self.get_object()
+    #     return self.request.user == user
 
     def get_object(self, queryset=None):
         """Получение текущего пользователя"""
