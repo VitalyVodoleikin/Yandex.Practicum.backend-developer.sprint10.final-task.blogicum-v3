@@ -153,14 +153,10 @@ class CommentCreateView(LoginRequiredMixin, ReverseMixin, CreateView):
     model = Comment
     form_class = CommentForm
 
-    def dispatch(self, request, *args, **kwargs):
-        # dispatch для других целей. Ссылка на обсуждение. Точно не для создания атрибутов. Найти пост и передать в форму можно в form_valid в строке с form.instance.post.
-        self.post_obj = get_object_or_404(Post, pk=kwargs['post_id'])
-        return super().dispatch(request, *args, **kwargs)
-
     def form_valid(self, form):
+        post_obj = get_object_or_404(Post, pk=self.kwargs['post_id'])
         form.instance.author = self.request.user
-        form.instance.post = self.post_obj
+        form.instance.post = post_obj
         return super().form_valid(form)
 
 
