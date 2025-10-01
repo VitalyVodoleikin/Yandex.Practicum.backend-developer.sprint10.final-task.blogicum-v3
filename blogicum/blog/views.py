@@ -134,7 +134,7 @@ class PostDeleteView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        instance = get_object_or_404(Post, pk=self.kwargs['post_id'])  # Лишний ручной запрос. Есть метод get_object() родителя с этой логикой, достаточно вызвать его вместо своего запроса. 
+        instance = self.get_object()
         form = PostCreateForm(self.request.POST, instance=instance)
         context['form'] = form
         return context
