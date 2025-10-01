@@ -12,7 +12,6 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
-# from blogicum.settings import FROM_EMAIL
 from django.conf import settings
 
 from .const import POSTS_RELEASE_LIMIT
@@ -44,14 +43,12 @@ class PostDetailView(DetailView):
     pk_url_kwarg = 'post_id'
 
     def get_object(self):
-        obj = get_selection_of_posts('author').filter(  # Есть метод get_object() родителя с этой логикой, достаточно вызвать его вместо своего запроса.
-            id=self.kwargs['post_id']
-        )
-        if obj and not obj[0].author == self.request.user:  # if obj.author == self.request.user:
-            filters = add_default_filters()  # Возвращаем obj
-        else:  # Лишние два строки.
-            filters = dict()
-        return get_object_or_404(obj, **filters)  # Первым аргументом дергаем get_posts_queryset, дофильтровываем по "id"
+        obj = super().get_object()
+        post_id = self.kwargs.get(self.pk_url_kwarg)
+
+        if obj.author == self.request.user:
+            return obj
+        return get_object_or_404(get_posts_queryset(), id=post_id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
