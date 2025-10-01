@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,14 +13,11 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
-from django.conf import settings
-
 from .const import POSTS_RELEASE_LIMIT
 from .forms import CommentForm, PostCreateForm, UserEditForm
 from .mixins import AuthorTestMixin, BaseUserMixin, ReverseMixin
 from .models import Category, Comment, Post
-from .utils import (add_default_filters, get_posts_queryset,
-                    get_selection_of_posts)
+from .utils import get_posts_queryset
 
 User = get_user_model()
 
