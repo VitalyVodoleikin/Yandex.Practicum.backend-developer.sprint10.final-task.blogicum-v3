@@ -33,12 +33,7 @@ class IndexListView(ListView):
     template_name = 'blog/index.html'
 
     def get_queryset(self):
-        return get_posts_queryset(
-            # Три строки аргументов лишние.
-            user=self.request.user,
-            apply_filters=True,
-            count_comments=True
-        )
+        return get_posts_queryset()
 
 
 class PostDetailView(DetailView):
@@ -79,8 +74,7 @@ class CategoryListView(ListView):
             is_published=True
         )
         return get_posts_queryset(
-            user=self.request.user,  # В base_queryset передавай сразу посты категории. Посты категории можно получить при помощи related_name. Пример как пользоваться.
-            category=category,
+            base_queryset=category.posts.all(),
             apply_filters=True,
             count_comments=True
         )
@@ -223,11 +217,13 @@ class UserListView(BaseUserMixin, ListView):
 
     def get_queryset(self):
         author = self.get_user_object()
+        apply_filters = not (self.request.user.is_authenticated
+                             and self.request.user == author)
+
         return get_posts_queryset(
-            user=self.request.user,  # В base_queryset передавай сразу посты автор. Посты автора можно получить при помощи related_name. Пример как пользоваться.
-            author=author,
-            apply_filters=True,  # Передавай логическое выражение "пользователь не автор".
-            count_comments=True  # Лишняя строка.
+            base_queryset=author.posts.all(),
+            apply_filters=apply_filters,
+            count_comments=True
         )
 
     def get_context_data(self, **kwargs):
@@ -242,11 +238,6 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserEditForm
     template_name = 'blog/user.html'
-
-    # def test_func(self):
-    #     """Проверка прав доступа"""
-    #     user = self.get_object()
-    #     return self.request.user == user
 
     def get_object(self, queryset=None):
         """Получение текущего пользователя"""
@@ -294,8 +285,3 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'registration/password_reset_complete.html'
-
-
-
-
-# Добавление комментариев ревьюера
