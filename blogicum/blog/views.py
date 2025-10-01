@@ -178,13 +178,7 @@ class CommentUpdateView(
     model = Comment
     form_class = CommentForm
     template_name = 'blog/comment.html'
-
-    def get_object(self, queryset=None):
-        # Лишнее переопределение метода. Чтобы родительский метод отрабатывал(под капотом), нужно в атрибуте pk_url_kwarg определить переменную, из которой класс получает id объекта.
-        return get_object_or_404(
-            Comment,
-            id=self.kwargs['comment_id'],
-        )
+    pk_url_kwarg = 'comment_id'
 
 
 class CommentDeleteView(
