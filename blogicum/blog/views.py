@@ -70,8 +70,6 @@ class CategoryListView(ListView):
         )
         return get_posts_queryset(
             base_queryset=category.posts.all(),
-            apply_filters=True,
-            count_comments=True
         )
 
     def get_context_data(self, **kwargs):
@@ -207,8 +205,7 @@ class UserListView(BaseUserMixin, ListView):
 
         return get_posts_queryset(
             base_queryset=author.posts.all(),
-            apply_filters=apply_filters,
-            count_comments=True
+            apply_filters=apply_filters
         )
 
     def get_context_data(self, **kwargs):
